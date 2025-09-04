@@ -1,0 +1,18 @@
+# Framework
+Flask==3.0.0
+Flask-Cors==4.0.0
+
+# DB
+SQLAlchemy==1.4.48
+psycopg2-binary==2.9.10
+alembic==1.12.0
+
+# Auth
+PyJWT==2.8.0
+passlib[bcrypt]==1.7.4
+
+# Server
+gunicorn==21.2.0
+
+# environment
+python-dotenv==1.1.1
