@@ -1,8 +1,11 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
 from datetime import datetime
-from app.infrastructure.db import Base
 
-class PostModel(Base):
+from sqlalchemy import Column, DateTime, Integer, String, Text
+
+from app.infrastructure.db import db
+
+
+class PostModel(db.Model):
     __tablename__ = "posts"
 
     id = Column(Integer, primary_key=True, index=True)

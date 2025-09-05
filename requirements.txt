@@ -1,6 +1,9 @@
 # Framework
 Flask==3.0.0
 Flask-Cors==4.0.0
+Flask-Pydantic==0.13.2
+Flask-SQLAlchemy==3.1.1
+flask_pydantic_spec==0.8.6
 
 # DB
 SQLAlchemy==1.4.48
