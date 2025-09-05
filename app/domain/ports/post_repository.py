@@ -1,6 +1,7 @@
 from typing import List, Protocol
 from app.domain.models.post import Post
 
+
 class PostRepository(Protocol):
     def save(self, post: Post) -> Post: ...
     def get_all(self) -> List[Post]: ...

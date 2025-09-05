@@ -1,6 +1,7 @@
 from app.domain.models.post import Post
 from app.domain.ports.post_repository import PostRepository
 
+
 class BlogService:
     def __init__(self, repo: PostRepository):
         self.repo = repo

@@ -2,8 +2,8 @@ from flask import Flask
 from flask_cors import CORS
 from flask_pydantic_spec import FlaskPydanticSpec
 
-from app.infrastructure.db import db
 from app.infrastructure.config import Config
+from app.infrastructure.db import db, migrate
 from app.infrastructure.web.middlewares.error import ErrorMiddleware
 from app.infrastructure.web.routes import register_routes
 
@@ -16,11 +16,16 @@ def create_app():
     ErrorMiddleware(app)
 
     db.init_app(app)
-
+    migrate.init_app(app, db)
 
     register_routes(app)
 
-    spec = FlaskPydanticSpec("flask", title="Blog API", version="1.0.0", openapi=True)
+    spec = FlaskPydanticSpec(
+        "flask",
+        title="Blog API",
+        version="1.0.0",
+        openapi=True,
+    )
     spec.register(app)
 
     return app
