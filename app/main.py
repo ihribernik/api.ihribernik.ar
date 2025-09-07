@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_pydantic_spec import FlaskPydanticSpec
 
 from app.infrastructure.config import Config
-from app.infrastructure.db import db, migrate
+from app.infrastructure.database import db, migrate
 from app.infrastructure.web.middlewares.error import ErrorMiddleware
 from app.infrastructure.web.routes import register_routes
 
