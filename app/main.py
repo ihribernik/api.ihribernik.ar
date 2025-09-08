@@ -1,32 +1,44 @@
-from flask import Flask
-from flask_cors import CORS
-from flask_pydantic_spec import FlaskPydanticSpec
+from dotenv import load_dotenv
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.infrastructure.config import Config
-from app.infrastructure.database import db, migrate
-from app.infrastructure.web.middlewares.error import ErrorMiddleware
+from app.infrastructure.web.middlewares.error import add_error_handlers
+from app.infrastructure.web.middlewares.health import db_health_check_middleware
 from app.infrastructure.web.routes import register_routes
 
+load_dotenv()
 
-def create_app():
-    app = Flask(__name__)
-    app.config.from_object(Config)
 
-    CORS(app)
-    ErrorMiddleware(app)
+def create_app() -> FastAPI:
+    app = FastAPI(
+        title="Blog API",
+        version="1.0.0",
+        openapi_url="/openapi.json",
+        docs_url="/docs",
+        redoc_url="/redoc",
+    )
 
-    db.init_app(app)
-    migrate.init_app(app, db)
+    config = Config()
+
+    # CORS
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=config.CORS_ORIGINS,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    # Health Check Middleware
+    app.middleware("http")(db_health_check_middleware)
+
+    # Database setup (if needed, e.g., create tables)
+    # Example: Base.metadata.create_all(bind=engine)
 
     register_routes(app)
 
-    spec = FlaskPydanticSpec(
-        "flask",
-        title="Blog API",
-        version="1.0.0",
-        openapi=True,
-    )
-    spec.register(app)
+    add_error_handlers(app)
 
     return app
 

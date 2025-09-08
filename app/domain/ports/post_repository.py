@@ -1,4 +1,5 @@
 from typing import List, Protocol
+
 from app.domain.models.post import Post
 
 

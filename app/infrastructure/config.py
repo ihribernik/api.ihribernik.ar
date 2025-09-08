@@ -1,24 +1,28 @@
 # app/infrastructure/config.py
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
 class Config:
-    SECRET_KEY = os.getenv("SECRET_KEY", "default-secret")
+    # API Configuration
+    API_TITLE = os.getenv("API_TITLE", "Blog API")
+    API_VERSION = os.getenv("API_VERSION", "1.0.0")
+    API_PREFIX = os.getenv("API_PREFIX", "/api")
     DEBUG = os.getenv("DEBUG", "false").lower() == "true"
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    DATABASE_USER = os.getenv("DATABASE_USER", "user")
-    DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD", "password")
-    DATABASE_HOST = os.getenv("DATABASE_HOST", "localhost")
-    DATABASE_PORT = os.getenv("DATABASE_PORT", 5432)
-    DATABASE_NAME = os.getenv("DATABASE_NAME", "mydatabase")
-
-    SQLALCHEMY_DATABASE_URI = (
-        f"postgresql+psycopg2://"
-        f"{DATABASE_USER}:{DATABASE_PASSWORD}@"
-        f"{DATABASE_HOST}:{DATABASE_PORT}/"
-        f"{DATABASE_NAME}"
+    # Database Configuration
+    SQLALCHEMY_DATABASE_URL = os.getenv(
+        "SQLALCHEMY_DATABASE_URL",
+        "sqlite:///./test.db",  # Default SQLite for development
     )
+
+    # CORS Configuration
+    CORS_ORIGINS = eval(os.getenv("CORS_ORIGINS", '["http://localhost:3000"]'))
+
+    @property
+    def is_sqlite(self) -> bool:
+        """Check if using SQLite database"""
+        return self.SQLALCHEMY_DATABASE_URL.startswith("sqlite")
