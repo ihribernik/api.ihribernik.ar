@@ -17,7 +17,6 @@ from app.infrastructure.repositories.sqlalchemy_post_repo import (
 )
 from app.main import create_app
 
-# Test database URL
 TEST_DB_URL = "sqlite:///./test.db"
 
 @pytest.fixture(scope="session")
@@ -64,7 +63,6 @@ def test_app(db_session: Session) -> FastAPI:
     """Provide test FastAPI application."""
     app = create_app()
 
-    # Override database session
     def override_get_db() -> Generator[Session, None, None]:
         try:
             yield db_session

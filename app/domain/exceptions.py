@@ -3,7 +3,7 @@ Domain-specific exceptions for the blog application.
 Provides a comprehensive hierarchy of exceptions for domain-specific errors.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 
@@ -11,7 +11,7 @@ class BlogException(Exception):
     """Base exception for all domain exceptions."""
 
     def __init__(self, message: str, details: Optional[Dict[str, Any]] = None):
-        self.timestamp = datetime.utcnow()
+        self.timestamp = datetime.now(timezone.utc)
         self.details = details
         super().__init__(message)
 

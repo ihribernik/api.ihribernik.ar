@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from app.main import app
 
-def test_create_and_list_posts():
+def test_create_and_list_posts() -> None:
     client = TestClient(app)
     # Create post
     response = client.post("/api/posts/", json={"title": "title", "content": "content", "author": "author"})

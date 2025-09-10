@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from app.domain.models.post import Post
-from app.schemas.post_schema import PostSchema
+from app.schemas.post import PostSchema
 
 
 def domain_post_to_schema(post: Post) -> PostSchema:

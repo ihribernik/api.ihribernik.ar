@@ -11,6 +11,9 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "pydantic>=2.4.2",
     "psycopg2-binary>=2.9.6",
+    "pydantic-settings>=2.10.1",
+    "python-jose[cryptography]>=3.5.0",
+    "passlib[bcrypt]>=1.7.4",
 ]
 
 [dependency-groups]
@@ -22,6 +25,8 @@ dev = [
     "pylance>=0.35.0",
     "pylint>=3.3.8",
     "pytest==8.4.1",
+    "types-passlib>=1.7.7.20250602",
+    "types-python-jose>=3.5.0.20250531",
 ]
 
 [tool.black]

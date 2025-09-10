@@ -1,26 +1,46 @@
-from dataclasses import dataclass
+import re
+import unicodedata
+from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
+
+from app.domain.models.tag import Tag
+from app.infrastructure.database.models import Category
+
+
+def slugify(value: str) -> str:
+    value = unicodedata.normalize("NFKD", value)
+    value = value.encode("ascii", "ignore").decode("ascii")
+    value = re.sub(r"[^\w\s-]", "", value).strip().lower()
+    return re.sub(r"[-\s]+", "-", value)
 
 
 @dataclass
 class Post:
-    """
-    Domain model for a blog post.
-    """
-
+    id: Optional[int]
     title: str
     content: str
-    author: str
-    id: Optional[int] = None
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
+    category: Optional[Category] = None
+    tags: List[Tag] = field(default_factory=list)
+    slug: str = field(init=False)
+    status: str = "draft"
+    published_at: Optional[datetime] = None
+    created_at: datetime = field(default_factory=datetime.utcnow)
+    updated_at: datetime = field(default_factory=datetime.utcnow)
 
     def __post_init__(self) -> None:
-        """
-        Initialize timestamps if not provided.
-        """
-        if self.created_at is None:
-            self.created_at = datetime.utcnow()
-        if self.updated_at is None:
-            self.updated_at = self.created_at
+        self.slug = slugify(self.title)
+
+    def publish(self) -> None:
+        self.status = "published"
+        self.published_at = datetime.utcnow()
+        self.updated_at = datetime.utcnow()
+
+    def add_tag(self, tag: Tag) -> None:
+        if tag not in self.tags:
+            self.tags.append(tag)
+            self.updated_at = datetime.utcnow()
+
+    def change_category(self, category: Category) -> None:
+        self.category = category
+        self.updated_at = datetime.utcnow()

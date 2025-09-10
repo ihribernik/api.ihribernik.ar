@@ -8,7 +8,7 @@ from sqlalchemy import engine_from_config, pool
 # Add app directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app.infrastructure.config import Config
+from app.infrastructure.config import Settings
 from app.infrastructure.database import Base
 from app.infrastructure.database.models import *  # noqa
 
@@ -31,7 +31,7 @@ config.set_main_option("sqlalchemy.url", database_url)
 
 def get_url() -> str:
     """Get the database URL from environment config."""
-    app_config = Config()
+    app_config = Settings()
     return app_config.SQLALCHEMY_DATABASE_URL
 
 

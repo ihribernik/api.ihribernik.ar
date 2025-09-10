@@ -1,26 +1,32 @@
-# app/infrastructure/config.py
-import os
-
-from dotenv import load_dotenv
-
-load_dotenv()
+from typing import List
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Config:
-    # API Configuration
-    API_TITLE = os.getenv("API_TITLE", "Blog API")
-    API_VERSION = os.getenv("API_VERSION", "1.0.0")
-    API_PREFIX = os.getenv("API_PREFIX", "/api")
-    DEBUG = os.getenv("DEBUG", "false").lower() == "true"
-
-    # Database Configuration
-    SQLALCHEMY_DATABASE_URL = os.getenv(
-        "SQLALCHEMY_DATABASE_URL",
-        "sqlite:///./test.db",  # Default SQLite for development
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=(".env", ".env.prod"),
+        env_file_encoding="utf-8",
     )
 
-    # CORS Configuration
-    CORS_ORIGINS = eval(os.getenv("CORS_ORIGINS", '["http://localhost:3000"]'))
+    API_TITLE: str = "Blog API"
+    API_VERSION: str = "1.0.0"
+    API_PREFIX: str = "/api"
+    DEBUG: bool = False
+
+    DATABASE_USER: str = "username"
+    DATABASE_PASSWORD: str = "password"
+    DATABASE_HOST: str = "localhost"
+    DATABASE_PORT: int = 5432
+    DATABASE_NAME: str = "blogdb"
+
+    SECRET_KEY: str = "mi_super_secreto"
+    JWT_SECRET_KEY: str = "otro_secreto"
+    JWT_ALGORITHM: str = "HS256"
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30 * 24 * 60
+
+    SQLALCHEMY_DATABASE_URL: str = "sqlite:///./test.db"
+
+    CORS_ORIGINS: List[str] = ["http://localhost:3000"]
 
     @property
     def is_sqlite(self) -> bool:
