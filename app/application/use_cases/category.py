@@ -1,7 +1,7 @@
 # app/application/use_cases/category_use_cases.py
 from typing import List, Optional
 
-from app.domain.models import Category
+from app.domain.models.category import Category
 from app.domain.repositories.category import CategoryRepository
 
 

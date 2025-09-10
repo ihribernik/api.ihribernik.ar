@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from app.domain.models import Tag
+from app.domain.models.tag import Tag
 from app.domain.repositories.tag import TagRepository
 
 

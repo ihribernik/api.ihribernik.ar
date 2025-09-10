@@ -2,7 +2,7 @@ from typing import List
 
 from app.domain.exceptions import PostAlreadyExists
 from app.domain.models.post import Post
-from app.domain.ports.post_repository import PostRepository
+from app.domain.repositories.post import PostRepository
 
 
 class BlogService:
@@ -18,19 +18,18 @@ class BlogService:
         """
         self.repo = repo
 
-    def create_post(self, title: str, content: str, author: str) -> Post:
+    def create_post(self, title: str, content: str) -> Post:
         """
         Create a new post, raising PostAlreadyExists if title is duplicate.
         :param title: Title of the post
         :param content: Content of the post
-        :param author: Author of the post
         :return: Created Post
         :raises PostAlreadyExists: If a post with the same title exists
         """
-        existing = [p for p in self.repo.get_all() if p.title == title]
+        existing = [p for p in self.repo.list() if p.title == title]
         if existing:
             raise PostAlreadyExists(f"A post with title '{title}' already exists.")
-        post = Post(id=None, title=title, content=content, author=author)
+        post = Post(id=None, title=title, content=content)
         return self.repo.save(post)
 
     def list_posts(self) -> List[Post]:
@@ -38,4 +37,4 @@ class BlogService:
         List all posts.
         :return: List of Post objects
         """
-        return self.repo.get_all()
+        return self.repo.list()

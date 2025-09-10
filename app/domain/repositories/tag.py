@@ -1,7 +1,7 @@
 # app/domain/repositories/tag_repository.py
 from abc import ABC, abstractmethod
 from typing import List, Optional
-from app.domain.models import Tag
+from app.domain.models.tag import Tag
 
 
 class TagRepository(ABC):

@@ -1,7 +1,7 @@
 # app/domain/repositories/post_repository.py
 from abc import ABC, abstractmethod
 from typing import List, Optional
-from app.domain.models import Post
+from app.domain.models.post import Post
 
 class PostRepository(ABC):
     @abstractmethod

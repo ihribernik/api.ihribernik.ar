@@ -1,7 +1,7 @@
 # app/domain/repositories/category_repository.py
 from abc import ABC, abstractmethod
 from typing import List, Optional
-from app.domain.models import Category
+from app.domain.models.category import Category
 
 
 class CategoryRepository(ABC):

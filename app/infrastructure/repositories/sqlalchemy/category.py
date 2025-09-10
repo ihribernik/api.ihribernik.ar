@@ -1,7 +1,7 @@
 # app/infrastructure/repositories/sqlalchemy_category_repository.py
 from typing import List, Optional
 from sqlalchemy.orm import Session
-from app.domain.models import Category
+from app.domain.models.category import Category
 from app.domain.repositories.category import CategoryRepository
 from app.infrastructure.database.models import Category as CategoryORM
 

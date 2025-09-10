@@ -13,6 +13,9 @@ from app.infrastructure.database.models import Tag as TagORM
 
 
 class SqlAlchemyPostRepository(PostRepository):
+    """
+    SQLAlchemy implementation of the PostRepository interface.
+    """
     def __init__(self, session: Session):
         self.session = session
 
@@ -49,7 +52,6 @@ class SqlAlchemyPostRepository(PostRepository):
             self.session.delete(orm)
             self.session.commit()
 
-    # ------------------------
     def _to_domain(self, orm: PostORM) -> Post:
         category = None
         if orm.category:
