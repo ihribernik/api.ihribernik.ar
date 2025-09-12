@@ -1,6 +1,7 @@
 """FastAPI error handling middleware."""
 
 import logging
+from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
 from fastapi import FastAPI, Request, status
@@ -24,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 def create_error_response(
-    status_code: int,
+    status_code: int | None,
     error_type: str,
     message: str,
     details: Optional[Dict[str, Any]] = None,
@@ -43,152 +44,106 @@ def create_error_response(
     )
 
 
+@dataclass
+class ExceptionHandlerConfig:
+    exc_class: type
+    status_code: int | None
+    error_type: str
+    default_message: str | None = None
+    log: bool = False
+
+
 def add_error_handlers(app: FastAPI) -> None:
     """Add exception handlers to the FastAPI application."""
 
-    @app.exception_handler(RequestValidationError)
-    async def validation_exception_handler(
-        request: Request, exc: RequestValidationError
-    ) -> JSONResponse:
-        """Handle FastAPI request validation errors."""
-        return create_error_response(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            error_type="Validation Error",
-            message="Invalid request parameters",
-            details={"errors": exc.errors()},
-        )
+    exception_handlers = [
+        ExceptionHandlerConfig(
+            RequestValidationError,
+            status.HTTP_422_UNPROCESSABLE_ENTITY,
+            "Validation Error",
+            "Invalid request parameters",
+        ),
+        ExceptionHandlerConfig(
+            DomainValidationError, status.HTTP_400_BAD_REQUEST, "VALIDATION_ERROR"
+        ),
+        ExceptionHandlerConfig(
+            InvalidPostError, status.HTTP_400_BAD_REQUEST, "INVALID_POST"
+        ),
+        ExceptionHandlerConfig(
+            PostNotFoundError, status.HTTP_404_NOT_FOUND, "NOT_FOUND"
+        ),
+        ExceptionHandlerConfig(
+            UnauthorizedError, status.HTTP_401_UNAUTHORIZED, "UNAUTHORIZED"
+        ),
+        ExceptionHandlerConfig(
+            ConnectionError,
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            "CONNECTION_ERROR",
+            "Database connection failed",
+            True,
+        ),
+        ExceptionHandlerConfig(
+            TransactionError,
+            status.HTTP_409_CONFLICT,
+            "TRANSACTION_ERROR",
+            "Database transaction failed",
+            True,
+        ),
+        ExceptionHandlerConfig(
+            DatabaseError,
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            "DATABASE_ERROR",
+            "Database operation failed",
+            True,
+        ),
+        ExceptionHandlerConfig(
+            SQLAlchemyError,
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            "DATABASE_ERROR",
+            "An unexpected database error occurred",
+            True,
+        ),
+        ExceptionHandlerConfig(StarletteHTTPException, None, "HTTP_ERROR"),
+        ExceptionHandlerConfig(
+            BlogException,
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            "APPLICATION_ERROR",
+            log=True,
+        ),
+        ExceptionHandlerConfig(
+            Exception,
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            "INTERNAL_SERVER_ERROR",
+            "An unexpected error occurred",
+            True,
+        ),
+    ]
 
-    @app.exception_handler(DomainValidationError)
-    async def domain_validation_handler(
-        request: Request, exc: DomainValidationError
-    ) -> JSONResponse:
-        """Handle domain validation errors."""
-        return create_error_response(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            error_type="VALIDATION_ERROR",
-            message=str(exc),
-            details={"errors": exc.validation_errors},
-        )
+    for config in exception_handlers:
 
-    @app.exception_handler(PostNotFoundError)
-    async def post_not_found_handler(
-        request: Request, exc: PostNotFoundError
-    ) -> JSONResponse:
-        """Handle post not found errors."""
-        return create_error_response(
-            status_code=status.HTTP_404_NOT_FOUND,
-            error_type="NOT_FOUND",
-            message=str(exc),
-            details=exc.details,
-        )
+        async def handler(
+            request: Request, exc: Exception, config: ExceptionHandlerConfig = config
+        ) -> JSONResponse:
+            """Generic exception handler using config dataclass."""
+            if config.log:
+                logger.error(f"{config.exc_class.__name__}: {exc}", exc_info=exc)
 
-    @app.exception_handler(InvalidPostError)
-    async def invalid_post_handler(
-        request: Request, exc: InvalidPostError
-    ) -> JSONResponse:
-        """Handle invalid post errors."""
-        return create_error_response(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            error_type="INVALID_POST",
-            message=str(exc),
-            details={"errors": exc.validation_errors},
-        )
+            status_code = config.status_code or getattr(
+                exc, "status_code", status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+            message = config.default_message or str(exc)
 
-    @app.exception_handler(UnauthorizedError)
-    async def auth_error_handler(
-        request: Request, exc: UnauthorizedError
-    ) -> JSONResponse:
-        """Handle authorization errors."""
-        return create_error_response(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            error_type="UNAUTHORIZED",
-            message=str(exc),
-            details=exc.details,
-        )
+            details = getattr(exc, "details", None)
+            if hasattr(exc, "validation_errors"):
+                details = {"errors": exc.validation_errors}
+            elif hasattr(exc, "errors"):
+                details = {"errors": exc.errors()}
 
-    @app.exception_handler(ConnectionError)
-    async def connection_error_handler(
-        request: Request, exc: ConnectionError
-    ) -> JSONResponse:
-        """Handle database connection errors."""
-        logger.error(f"Database connection error: {exc}")
-        return create_error_response(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            error_type="CONNECTION_ERROR",
-            message="Database connection failed",
-            details=exc.details,
-        )
+            return create_error_response(
+                status_code=status_code,
+                error_type=config.error_type,
+                message=message,
+                details=details,
+            )
 
-    @app.exception_handler(TransactionError)
-    async def transaction_error_handler(
-        request: Request, exc: TransactionError
-    ) -> JSONResponse:
-        """Handle database transaction errors."""
-        logger.error(f"Database transaction error: {exc}")
-        return create_error_response(
-            status_code=status.HTTP_409_CONFLICT,
-            error_type="TRANSACTION_ERROR",
-            message="Database transaction failed",
-            details=exc.details,
-        )
-
-    @app.exception_handler(DatabaseError)
-    async def database_error_handler(
-        request: Request, exc: DatabaseError
-    ) -> JSONResponse:
-        """Handle general database errors."""
-        logger.error(f"Database error: {exc}")
-        return create_error_response(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            error_type="DATABASE_ERROR",
-            message="Database operation failed",
-            details=exc.details,
-        )
-
-    @app.exception_handler(SQLAlchemyError)
-    async def sqlalchemy_error_handler(
-        request: Request, exc: SQLAlchemyError
-    ) -> JSONResponse:
-        """Handle unexpected SQLAlchemy errors."""
-        logger.error(f"Unexpected SQLAlchemy error: {exc}", exc_info=exc)
-        return create_error_response(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            error_type="DATABASE_ERROR",
-            message="An unexpected database error occurred",
-        )
-
-    @app.exception_handler(StarletteHTTPException)
-    async def http_exception_handler(
-        request: Request, exc: StarletteHTTPException
-    ) -> JSONResponse:
-        """Handle HTTP exceptions."""
-        return create_error_response(
-            status_code=exc.status_code,
-            error_type="HTTP_ERROR",
-            message=str(exc.detail),
-        )
-
-    @app.exception_handler(BlogException)
-    async def blog_exception_handler(
-        request: Request, exc: BlogException
-    ) -> JSONResponse:
-        """Handle generic blog exceptions."""
-        logger.error(f"Blog exception: {exc}")
-        return create_error_response(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            error_type="APPLICATION_ERROR",
-            message=str(exc),
-            details=exc.details,
-        )
-
-    @app.exception_handler(Exception)
-    async def generic_exception_handler(
-        request: Request, exc: Exception
-    ) -> JSONResponse:
-        """Handle any unhandled exceptions."""
-        logger.error(f"Unhandled error: {exc}", exc_info=exc)
-        return create_error_response(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            error_type="INTERNAL_SERVER_ERROR",
-            message="An unexpected error occurred",
-        )
+        app.add_exception_handler(config.exc_class, handler)

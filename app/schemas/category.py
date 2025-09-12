@@ -11,6 +11,7 @@ class CategoryDTO(BaseModel):
     class Config:
         orm_mode = True
 
+
 class CreateCategoryDTO(BaseModel):
     name: str
     slug: str

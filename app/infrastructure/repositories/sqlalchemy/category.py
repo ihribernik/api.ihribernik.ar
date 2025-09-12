@@ -5,6 +5,7 @@ from app.domain.models.category import Category
 from app.domain.repositories.category import CategoryRepository
 from app.infrastructure.database.models import Category as CategoryORM
 
+
 class SqlAlchemyCategoryRepository(CategoryRepository):
     def __init__(self, session: Session):
         self.session = session
