@@ -1,21 +1,19 @@
 from __future__ import annotations
 
-from fastapi import APIRouter
-from fastapi import HTTPException
-from fastapi import status
+from typing import Dict
+
+from fastapi import APIRouter, HTTPException, status
 
 from app.application.use_cases.auth import LoginUser
 from app.infrastructure.auth import JWTService
 from app.infrastructure.repositories.sqlalchemy.user import SqlAlchemyUserRepository
-from app.schemas.auth import LoginRequest
-from app.schemas.auth import RefreshRequest
-from app.schemas.auth import TokenPairResponse
+from app.schemas.auth import LoginRequest, RefreshRequest, TokenPairResponse
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post("/login", response_model=TokenPairResponse)
-def login(data: LoginRequest):
+def login(data: LoginRequest) -> TokenPairResponse:
     repo = SqlAlchemyUserRepository()
     use_case = LoginUser(repo)
 
@@ -32,7 +30,7 @@ def login(data: LoginRequest):
 
 
 @router.post("/refresh", response_model=dict)
-def refresh(data: RefreshRequest):
+def refresh(data: RefreshRequest) -> Dict[str, str]:
     new_access_token = JWTService.refresh_access_token(data.refresh_token)
     if not new_access_token:
         raise HTTPException(

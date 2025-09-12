@@ -39,7 +39,7 @@ def create_error_response(
         content["details"] = details
 
     return JSONResponse(
-        status_code=status_code,
+        status_code=status_code or status.HTTP_500_INTERNAL_SERVER_ERROR,
         content=content,
     )
 

@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 
 from app.domain.models.user import User
 from app.domain.repositories.user import UserRepository
-from app.infrastructure.database.models import UserORM  # tu modelo SQLAlchemy
-from app.infrastructure.database.session import get_session  # tu helper de sesiones
+from app.infrastructure.database.models import User as UserORM
+from app.infrastructure.database.session import get_session  # TODO - Revisar
 
 
 class SqlAlchemyUserRepository(UserRepository):

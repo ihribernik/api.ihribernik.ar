@@ -13,7 +13,7 @@ load_dotenv()
 def create_app() -> FastAPI:
     settings = Settings()
 
-    app = FastAPI(
+    fastapi_app = FastAPI(
         title=settings.API_TITLE,
         version=settings.API_VERSION,
         openapi_url="/openapi.json",
@@ -21,7 +21,7 @@ def create_app() -> FastAPI:
         redoc_url="/redoc",
     )
 
-    app.add_middleware(
+    fastapi_app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.CORS_ORIGINS,
         allow_credentials=True,
@@ -29,13 +29,13 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    app.middleware("http")(db_health_check_middleware)
+    fastapi_app.middleware("http")(db_health_check_middleware)
 
-    register_routes(app, prefix=settings.API_PREFIX)
+    register_routes(fastapi_app, prefix=settings.API_PREFIX)
 
-    add_error_handlers(app)
+    add_error_handlers(fastapi_app)
 
-    return app
+    return fastapi_app
 
 
 app = create_app()

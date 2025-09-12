@@ -16,6 +16,7 @@ class SqlAlchemyPostRepository(PostRepository):
     """
     SQLAlchemy implementation of the PostRepository interface.
     """
+
     def __init__(self, session: Session):
         self.session = session
 
@@ -85,5 +86,11 @@ class SqlAlchemyPostRepository(PostRepository):
         )
         if post.category:
             orm.category = self.session.get(CategoryORM, post.category.id)
-        orm.tags = [self.session.get(TagORM, t.id) for t in post.tags if t.id]
+
+        # TODO - Revisar esto
+        orm.tags = [
+            tag
+            for tag in (self.session.get(TagORM, t.id) for t in post.tags if t.id)
+            if tag is not None
+        ]
         return orm

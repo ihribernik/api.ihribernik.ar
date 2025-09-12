@@ -23,7 +23,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
             headers={'WWW-Authenticate': 'Bearer'},
         )
 
-    username: str = payload.get('sub')
+    username: str | None = payload.get('sub')
     if not username:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

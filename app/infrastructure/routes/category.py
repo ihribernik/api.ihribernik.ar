@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import List
 
 from fastapi import APIRouter, Depends, status
 
@@ -12,8 +13,8 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=list[CategoryDTO])
-async def list() -> list[CategoryDTO]:
+@router.get("/", response_model=List[CategoryDTO])
+async def get_all() -> List[CategoryDTO]:
     return []
 
 

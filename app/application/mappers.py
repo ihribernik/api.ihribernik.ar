@@ -7,8 +7,12 @@ from app.schemas.post import PostDTO
 
 def domain_post_to_schema(post: Post) -> PostDTO:
     return PostDTO(
+        id=post.id,
         title=post.title,
         content=post.content,
+        category=post.category,
+        tags=post.tags,
+        slug=post.slug,
     )
 
 
