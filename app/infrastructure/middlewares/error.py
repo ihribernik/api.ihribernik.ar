@@ -30,7 +30,7 @@ def create_error_response(
     details: Optional[Dict[str, Any]] = None,
 ) -> JSONResponse:
     """Create a standardized error response."""
-    content = {
+    content: Dict[str, str | Dict[str, Any]] = {
         "error": error_type,
         "message": message,
     }
