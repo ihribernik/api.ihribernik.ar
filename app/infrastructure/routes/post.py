@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter
+from fastapi import Depends
+from fastapi import status
 from sqlalchemy.orm import Session
 
-from app.application.blog_service import BlogService
-from app.application.mappers import domain_post_to_schema, schema_to_domain_post
 from app.infrastructure.auth.dependencies import get_current_user
 from app.infrastructure.database import get_db
+from app.infrastructure.mappers.post import PostMapper
 from app.infrastructure.repositories.sqlalchemy.post import SqlAlchemyPostRepository
 from app.schemas.post import PostDTO
 
