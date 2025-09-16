@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import hashlib
 from datetime import datetime, timedelta, timezone
 
 from jose import ExpiredSignatureError, JWTError, jwt
 
-from app.infrastructure.config import Settings
+from app.core.config import Settings
 
 settings = Settings()
 
@@ -69,3 +70,13 @@ class JWTService:
             return None
 
         return JWTService.create_access_token({"sub": sub})
+
+
+class PasswordService:
+    @staticmethod
+    def verify(plain_password: str, hashed_password: str) -> bool:
+        return hashed_password == hashlib.sha256(plain_password.encode()).hexdigest()
+
+    @staticmethod
+    def hash_password(plain_password: str) -> str:
+        return hashlib.sha256(plain_password.encode()).hexdigest()

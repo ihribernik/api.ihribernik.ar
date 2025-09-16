@@ -3,7 +3,7 @@ from typing import Optional
 
 
 @dataclass
-class Tag:
+class TagModel:
     id: Optional[int]
     name: str
     slug: str

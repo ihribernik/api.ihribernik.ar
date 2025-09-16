@@ -2,7 +2,7 @@ import importlib
 import pkgutil
 
 from fastapi import FastAPI
-
+from fastapi.logger import logger
 
 def register_routes(app: FastAPI, prefix: str = "/api") -> None:
     package = __name__
@@ -11,5 +11,5 @@ def register_routes(app: FastAPI, prefix: str = "/api") -> None:
             continue
         module = importlib.import_module(f"{package}.{module_name}")
         if hasattr(module, "router"):
-            print(f" * Including router from '{module_name}'")
+            logger.info(f"Registering {module_name} router")
             app.include_router(module.router, prefix=prefix)

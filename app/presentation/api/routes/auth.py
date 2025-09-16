@@ -2,21 +2,24 @@ from __future__ import annotations
 
 from typing import Dict
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.application.use_cases.auth import LoginUser
+from app.application.services.auth import LoginUser
 from app.infrastructure.auth import JWTService
-from app.infrastructure.repositories.sqlalchemy.user import SqlAlchemyUserRepository
-from app.schemas.auth import LoginRequest, RefreshRequest, TokenPairResponse
+from app.presentation.schemas.auth import (
+    LoginRequest,
+    RefreshRequest,
+    TokenPairResponse,
+)
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post("/login", response_model=TokenPairResponse)
-def login(data: LoginRequest) -> TokenPairResponse:
-    repo = SqlAlchemyUserRepository()
-    use_case = LoginUser(repo)
-
+def login(
+    data: LoginRequest,
+    use_case: LoginUser = Depends(),
+) -> TokenPairResponse:
     token = use_case.execute(data.username, data.password)
     if not token:
         raise HTTPException(

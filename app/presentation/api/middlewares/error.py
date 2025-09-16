@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from app.domain.exceptions import (
+from app.core.exceptions import (
     BlogException,
     ConnectionError,
     DatabaseError,

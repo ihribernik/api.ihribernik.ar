@@ -2,10 +2,10 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.infrastructure.config import Settings
-from app.infrastructure.middlewares.error import add_error_handlers
-from app.infrastructure.middlewares.health import db_health_check_middleware
-from app.infrastructure.routes import register_routes
+from app.core.config import Settings
+from app.presentation.api.middlewares.error import add_error_handlers
+from app.presentation.api.middlewares.health import db_health_check_middleware
+from app.presentation.api.routes import register_routes
 
 load_dotenv()
 
