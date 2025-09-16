@@ -1,6 +1,6 @@
 # TODO: blog.ihribernik.ar
 
-## Completed Tasks
+## Tasks
 
 - [x] model for the Post entity
 - [x] model for the User entity
@@ -23,10 +23,6 @@
 - [x] add the initial requirements in pyproject.toml
 - [x] add the flake8 configuration
 - [x] added the Config class to manage env variables
-
-
-## Pending Tasks
-
 - Endpoints to be added based on the models:
   - [ ] add a new endpoint to get all posts
   - [ ] add a new endpoint to get a specific post by id
@@ -49,4 +45,3 @@
   - [ ] add a new endpoint to authenticate a user
   - [ ] add a new endpoint to refresh the token
   - [ ] add a new endpoint to verify the token
-

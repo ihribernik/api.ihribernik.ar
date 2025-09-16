@@ -10,7 +10,7 @@ from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session
 
 from app.application.blog_service import BlogService
-from app.domain.models.post import Post
+from app.domain.models.post import PostModel
 from app.infrastructure.database import Base
 from app.infrastructure.repositories.sqlalchemy_post_repo import (
     SqlAlchemyPostRepository,
@@ -90,9 +90,9 @@ def sample_post() -> Dict[str, Any]:
     }
 
 @pytest.fixture
-def sample_domain_post() -> Post:
+def sample_domain_post() -> PostModel:
     """Provide sample domain post."""
-    return Post(
+    return PostModel(
         title="Test Post",
         content="Test Content",
         author="test_author"

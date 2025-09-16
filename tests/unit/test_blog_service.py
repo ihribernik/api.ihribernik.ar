@@ -1,5 +1,5 @@
 import pytest
-from app.domain.models.post import Post
+from app.domain.models.post import PostModel
 from app.application.blog_service import BlogService
 
 class InMemoryPostRepository:
@@ -7,7 +7,7 @@ class InMemoryPostRepository:
         self._posts = []
         self._id = 1
 
-    def save(self, post: Post) -> Post:
+    def save(self, post: PostModel) -> PostModel:
         post.id = self._id
         self._id += 1
         self._posts.append(post)
