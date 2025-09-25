@@ -1,5 +1,5 @@
 # app/infrastructure/repositories/sqlalchemy_post_repository.py
-from typing import List, Optional
+from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
@@ -21,26 +21,27 @@ class SqlAlchemyPostRepository(PostRepository):
     def __init__(self, session: Session):
         self.session = session
 
-    def get_by_id(self, post_id: int) -> Optional[PostModel]:
+    def get_by_id(self, post_id: int) -> PostModel | None:
         orm = self.session.get(PostORM, post_id)
         return PostMapper.to_domain(orm) if orm else None
 
-    def get_by_slug(self, slug: str) -> Optional[PostModel]:
+    def get_by_slug(self, slug: str) -> PostModel | None:
         orm = self.session.query(PostORM).filter_by(slug=slug).first()
         return PostMapper.to_domain(orm) if orm else None
 
-    def get_all(self) -> List[PostModel]:
+    def get_all(self) -> list[PostModel]:
         return [PostMapper.to_domain(o) for o in self.session.query(PostORM).all()]
 
     def save(self, post: PostModel) -> PostModel:
-        if post.id:
-            orm = self.session.get(PostORM, post.id)
-            if orm:
-                orm.title = post.title
-                orm.content = post.content
-                orm.slug = post.slug
-                orm.status = post.status
-                orm.updated_at = post.updated_at
+
+        orm = self.session.get(PostORM, post.id if post.id else None)
+
+        if orm:
+            orm.title = post.title
+            orm.content = post.content
+            orm.slug = post.slug
+            orm.status = post.status
+            orm.updated_at = post.updated_at
         else:
             orm = self._to_orm(post)
             self.session.add(orm)

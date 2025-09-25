@@ -1,9 +1,15 @@
 from __future__ import annotations
 
 import hashlib
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
+from datetime import timedelta
+from datetime import timezone
+from typing import Any
+from typing import Dict
 
-from jose import ExpiredSignatureError, JWTError, jwt
+from jose import ExpiredSignatureError
+from jose import jwt
+from jose import JWTError
 
 from app.core.config import Settings
 
@@ -20,56 +26,57 @@ class JWTService:
     def create_access_token(
         data: dict,
         expires_delta: timedelta | None = None,
-    ) -> str:
+    ) -> str | None:
         to_encode = data.copy()
         expire = datetime.now(timezone.utc) + (
             expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         )
-        to_encode.update({"exp": expire, "type": "access"})
+        to_encode.update({'exp': expire, 'type': 'access'})
         return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
     @staticmethod
     def create_refresh_token(
         data: dict,
         expires_delta: timedelta | None = None,
-    ) -> str:
+    ) -> str | None:
         to_encode = data.copy()
         expire = datetime.now(timezone.utc) + (
             expires_delta or timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
         )
-        to_encode.update({"exp": expire, "type": "refresh"})
+        to_encode.update({'exp': expire, 'type': 'refresh'})
         return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
     @staticmethod
-    def verify_token(token: str, expected_type: str = "access") -> dict | None:
+    def verify_token(
+        token: str, expected_type: str = 'access',
+    ) -> dict[str, Any] | None:
         """
         expected_type puede ser "access" o "refresh"
         """
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            if payload.get("type") != expected_type:
+            if payload.get('type') != expected_type:
                 return None
             return payload
         except ExpiredSignatureError:
-            return None  # Token expirado
+            return None
         except JWTError:
-            return None  # Token inválido
+            return None
 
     @staticmethod
     def refresh_access_token(refresh_token: str) -> str | None:
         """
         Recibe un refresh token válido y genera un nuevo access token.
         """
-        payload = JWTService.verify_token(refresh_token, expected_type="refresh")
+        payload = JWTService.verify_token(refresh_token, expected_type='refresh')
         if not payload:
             return None
 
-        # Eliminar campos viejos que no corresponden
-        sub = payload.get("sub")
+        sub = payload.get('sub')
         if not sub:
             return None
 
-        return JWTService.create_access_token({"sub": sub})
+        return JWTService.create_access_token({'sub': sub})
 
 
 class PasswordService:

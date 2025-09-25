@@ -1,21 +1,8 @@
-from abc import ABC, abstractmethod
-from typing import List, Optional
+from __future__ import annotations
 
 from app.domain.models.post import PostModel
+from app.domain.repositories import BaseRepository
 
 
-class PostRepository(ABC):
-    @abstractmethod
-    def get_by_id(self, post_id: int) -> Optional[PostModel]: ...
-
-    @abstractmethod
-    def get_by_slug(self, slug: str) -> Optional[PostModel]: ...
-
-    @abstractmethod
-    def get_all(self) -> List[PostModel]: ...
-
-    @abstractmethod
-    def save(self, post: PostModel) -> PostModel: ...
-
-    @abstractmethod
-    def delete(self, post_id: int) -> None: ...
+class PostRepository(BaseRepository[PostModel, PostModel, int]):
+    pass

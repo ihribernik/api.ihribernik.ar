@@ -15,6 +15,7 @@ dependencies = [
     "python-jose[cryptography]>=3.5.0",
     "passlib[bcrypt]>=1.7.4",
     "pre-commit>=4.3.0",
+    "alembic>=1.16.5",
 ]
 
 [dependency-groups]

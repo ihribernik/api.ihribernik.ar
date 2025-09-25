@@ -1,21 +1,8 @@
-from abc import ABC, abstractmethod
-from typing import List, Optional
+from __future__ import annotations
 
 from app.domain.models.tag import TagModel
+from app.domain.repositories import BaseRepository
 
 
-class TagRepository(ABC):
-    @abstractmethod
-    def get_by_id(self, tag_id: int) -> Optional[TagModel]: ...
-
-    @abstractmethod
-    def get_by_slug(self, slug: str) -> Optional[TagModel]: ...
-
-    @abstractmethod
-    def get_all(self) -> List[TagModel]: ...
-
-    @abstractmethod
-    def save(self, tag: TagModel) -> TagModel: ...
-
-    @abstractmethod
-    def delete(self, tag_id: int) -> None: ...
+class TagRepository(BaseRepository[TagModel, TagModel, int]):
+    pass

@@ -1,4 +1,5 @@
-from typing import Optional
+from __future__ import annotations
+
 from app.domain.models.tag import TagModel
 from app.infrastructure.database.models import Tag as TagORM
 from app.presentation.schemas.tag import TagResponse
@@ -6,10 +7,10 @@ from app.presentation.schemas.tag import TagResponse
 
 class TagMapper:
     @staticmethod
-    def to_domain(orm: Optional[TagORM]) -> Optional[TagModel]:
+    def to_domain(orm: TagORM | None) -> TagModel:
 
         if orm is None:
-            return None
+            raise ValueError('ORM object cannot be None')
 
         return TagModel(
             id=orm.id,

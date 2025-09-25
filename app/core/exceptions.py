@@ -2,60 +2,62 @@
 Domain-specific exceptions for the blog application.
 Provides a comprehensive hierarchy of exceptions for domain-specific errors.
 """
+from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import datetime
+from datetime import timezone
+from typing import Any
 
 
-class BlogException(Exception):
+class PostException(Exception):
     """Base exception for all domain exceptions."""
 
-    def __init__(self, message: str, details: Optional[Dict[str, Any]] = None):
+    def __init__(self, message: str, details: dict[str, Any] | None = None):
         self.timestamp = datetime.now(timezone.utc)
         self.details = details
         super().__init__(message)
 
 
-class DomainValidationError(BlogException):
+class DomainValidationError(PostException):
     """Base class for all domain validation errors."""
 
-    def __init__(self, message: str, validation_errors: List[str]):
-        details = {"validation_errors": validation_errors}
+    def __init__(self, message: str, validation_errors: list[str]):
+        details = {'validation_errors': validation_errors}
         super().__init__(message, details)
         self.validation_errors = validation_errors
 
 
-class PostNotFoundError(BlogException):
+class PostNotFoundError(PostException):
     """Raised when a requested post is not found."""
 
     def __init__(self, post_id: str):
         message = f"Post with id {post_id} not found"
-        super().__init__(message, {"post_id": post_id})
+        super().__init__(message, {'post_id': post_id})
 
 
 class InvalidPostError(DomainValidationError):
     """Raised when post validation fails."""
 
-    def __init__(self, errors: List[str]):
-        super().__init__("Post validation failed", errors)
+    def __init__(self, errors: list[str]):
+        super().__init__('Post validation failed', errors)
 
 
-class UnauthorizedError(BlogException):
+class UnauthorizedError(PostException):
     """Raised when user is not authorized to perform an action."""
 
-    def __init__(self, message: str, details: Optional[Dict[str, Any]] = None):
+    def __init__(self, message: str, details: dict[str, Any] | None = None):
         self.message = message
         self.details = details or {}
         super().__init__(self.message)
 
 
-class ValidationError(BlogException):
+class ValidationError(PostException):
     """Raised when domain validation fails."""
 
     pass
 
 
-class PostError(BlogException):
+class PostError(PostException):
     """Base class for post-related errors."""
 
     pass
@@ -83,7 +85,7 @@ class PostValidationError(PostError, ValidationError):
     pass
 
 
-class RepositoryError(BlogException):
+class RepositoryError(PostException):
     """Base class for repository-related errors."""
 
     pass
@@ -92,7 +94,7 @@ class RepositoryError(BlogException):
 class DatabaseError(RepositoryError):
     """Raised when a database operation fails."""
 
-    def __init__(self, message: str, original_error: Optional[Exception] = None):
+    def __init__(self, message: str, original_error: Exception | None = None):
         super().__init__(message)
         self.original_error = original_error
 
@@ -109,18 +111,18 @@ class TransactionError(DatabaseError):
     pass
 
 
-class AuthorizationError(BlogException):
+class AuthorizationError(PostException):
     """Raised when authorization fails."""
 
     pass
 
 
-class RateLimitError(BlogException):
+class RateLimitError(PostException):
     """Raised when rate limit is exceeded."""
 
     def __init__(self, limit: int, window: int):
         super().__init__(
-            f"Rate limit of {limit} requests per {window} seconds exceeded"
+            f"Rate limit of {limit} requests per {window} seconds exceeded",
         )
         self.limit = limit
         self.window = window
