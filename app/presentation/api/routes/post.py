@@ -33,8 +33,9 @@ async def create_post(
 ) -> PostResponse:
     """
     Create a new post from the request body.
-    :param body: PostRequest from request
-    :param service: PostService dependency
+        :param body: PostRequest from request
+        :param service: PostService dependency
+
     :return: Created PostResponse
     """
     created = service.execute(
