@@ -7,6 +7,7 @@ from fastapi import status
 
 from app.application.services.auth import LoginUser
 from app.infrastructure.auth import JWTService
+from app.infrastructure.dependencies.service.auth import get_login_user_service
 from app.presentation.schemas.auth import LoginRequest
 from app.presentation.schemas.auth import RefreshRequest
 from app.presentation.schemas.auth import TokenPairResponse
@@ -17,9 +18,9 @@ router = APIRouter(prefix='/auth', tags=['Auth'])
 @router.post('/login', response_model=TokenPairResponse)
 def login(
     data: LoginRequest,
-    use_case: LoginUser = Depends(),
+    service: LoginUser = Depends(get_login_user_service),
 ) -> TokenPairResponse:
-    token = use_case.execute(data.username, data.password)
+    token = service.execute(data.username, data.password)
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

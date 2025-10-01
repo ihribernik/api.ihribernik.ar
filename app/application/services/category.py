@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+from app.application.services import Service
 from app.domain.models.category import CategoryModel
 from app.domain.repositories.category import CategoryRepository
 
 
-class CreateCategory:
+class CreateCategory(Service):
     def __init__(self, repo: CategoryRepository):
         self.repo = repo
 
@@ -15,7 +16,7 @@ class CreateCategory:
         return self.repo.save(category)
 
 
-class GetCategoryBySlug:
+class GetCategoryBySlug(Service):
     def __init__(self, repo: CategoryRepository):
         self.repo = repo
 
@@ -23,7 +24,7 @@ class GetCategoryBySlug:
         return self.repo.get_by_slug(slug)
 
 
-class ListCategories:
+class ListCategories(Service):
     def __init__(self, repo: CategoryRepository):
         self.repo = repo
 
@@ -31,7 +32,7 @@ class ListCategories:
         return self.repo.get_all()
 
 
-class GetCategoryById:
+class GetCategoryById(Service):
     def __init__(self, repo: CategoryRepository):
         self.repo = repo
 
@@ -39,7 +40,7 @@ class GetCategoryById:
         return self.repo.get_by_id(category_id)
 
 
-class UpdateCategory:
+class UpdateCategory(Service):
     def __init__(self, repo: CategoryRepository):
         self.repo = repo
 
@@ -47,7 +48,7 @@ class UpdateCategory:
         return self.repo.get_by_id(category_id)
 
 
-class DeleteCategory:
+class DeleteCategory(Service):
     def __init__(self, repo: CategoryRepository):
         self.repo = repo
 

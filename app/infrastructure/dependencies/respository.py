@@ -6,6 +6,7 @@ from app.infrastructure.repositories.sqlalchemy.category import (
     SqlAlchemyCategoryRepository,
 )
 from app.infrastructure.repositories.sqlalchemy.post import SqlAlchemyPostRepository
+from app.infrastructure.repositories.sqlalchemy.tag import SqlAlchemyTagRepository
 from app.infrastructure.repositories.sqlalchemy.user import SqlAlchemyUserRepository
 
 
@@ -30,3 +31,10 @@ def get_user_repository(db: Session = Depends(get_db)) -> SqlAlchemyUserReposito
     Dependency to provide a SQLAlchemyUserRepository with a session.
     """
     return SqlAlchemyUserRepository(db)
+
+
+def get_tag_repository(db: Session = Depends(get_db)) -> SqlAlchemyTagRepository:
+    """
+    Dependency to provide a SQLAlchemyTagRepository with a session.
+    """
+    return SqlAlchemyTagRepository(db)

@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from datetime import timedelta
 
+from app.application.services import Service
 from app.domain.repositories.user import UserRepository
 from app.infrastructure.auth import JWTService
 
 
-class LoginUser:
+class LoginUser(Service):
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
 

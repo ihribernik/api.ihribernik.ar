@@ -1,33 +1,11 @@
 from __future__ import annotations
 
+from app.application.services import Service
 from app.domain.models.post import PostModel
 from app.domain.repositories.post import PostRepository
 
 
-class PostService:
-    def __init__(self, repo: PostRepository):
-        self.repo = repo
-
-    def get_all(self) -> list[PostModel]:
-        return self.repo.get_all()
-
-    def get_by_id(self, post_id: int) -> PostModel | None:
-        return self.repo.get_by_id(post_id)
-
-    def get_by_slug(self, slug: str) -> PostModel | None:
-        return self.repo.get_by_slug(slug)
-
-    def create(self, title: str, content: str) -> PostModel:
-        return self.repo.save(PostModel(id=None, title=title, content=content))
-
-    def delete(self, post_id: int) -> None:
-        self.repo.delete(post_id)
-
-    def update(self, post_id: int, title: str, content: str) -> PostModel | None:
-        return self.repo.save(PostModel(id=post_id, title=title, content=content))
-
-
-class CreatePost:
+class CreatePost(Service):
     def __init__(self, repo: PostRepository):
         self.repo = repo
 
@@ -40,7 +18,7 @@ class CreatePost:
         return self.repo.save(post)
 
 
-class GetPostBySlug:
+class GetPostBySlug(Service):
     def __init__(self, repo: PostRepository):
         self.repo = repo
 
@@ -48,7 +26,7 @@ class GetPostBySlug:
         return self.repo.get_by_slug(slug)
 
 
-class ListPosts:
+class ListPosts(Service):
     def __init__(self, repo: PostRepository):
         self.repo = repo
 
@@ -56,7 +34,7 @@ class ListPosts:
         return self.repo.get_all()
 
 
-class GetPostById:
+class GetPostById(Service):
     def __init__(self, repo: PostRepository):
         self.repo = repo
 
@@ -64,7 +42,7 @@ class GetPostById:
         return self.repo.get_by_id(post_id)
 
 
-class UpdatePost:
+class UpdatePost(Service):
     def __init__(self, repo: PostRepository):
         self.repo = repo
 
@@ -72,7 +50,7 @@ class UpdatePost:
         return self.repo.get_by_id(post_id)
 
 
-class DeletePost:
+class DeletePost(Service):
     def __init__(self, repo: PostRepository):
         self.repo = repo
 
