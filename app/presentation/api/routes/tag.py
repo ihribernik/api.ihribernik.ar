@@ -14,7 +14,6 @@ from app.infrastructure.dependencies.service.tag import (
     get_create_tag_service,
     get_delete_tag_service,
     get_get_tag_by_id_service,
-    get_get_tag_by_slug_service,
     get_list_tag_service,
     get_update_tag_service,
 )

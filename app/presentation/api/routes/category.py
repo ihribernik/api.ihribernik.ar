@@ -8,7 +8,6 @@ from app.infrastructure.dependencies.service.category import (
     get_create_category_service,
     get_delete_category_service,
     get_get_category_by_id_service,
-    get_get_category_by_slug_service,
     get_list_category_service,
     get_update_category_service,
 )
