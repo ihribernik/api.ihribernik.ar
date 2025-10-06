@@ -25,14 +25,15 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
 
-database_url = os.getenv("DATABASE_URL", "sqlite:///./dev.db")
-config.set_main_option("sqlalchemy.url", database_url)
-
 
 def get_url() -> str:
     """Get the database URL from environment config."""
     app_config = Settings()
-    return app_config.SQLALCHEMY_DATABASE_URL
+    return app_config.connection_string
+
+
+print(get_url())
+config.set_main_option("sqlalchemy.url", get_url())
 
 
 def run_migrations_offline() -> None:

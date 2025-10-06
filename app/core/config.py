@@ -11,9 +11,11 @@ class Settings(BaseSettings):
 
     API_TITLE: str = "Blog API"
     API_VERSION: str = "1.0.0"
+    API_PORT: int = 8000
     API_PREFIX: str = "/api"
     DEBUG: bool = False
 
+    DATABASE_DRIVER: str = "postgresql"
     DATABASE_USER: str = "username"
     DATABASE_PASSWORD: str = "password"
     DATABASE_HOST: str = "localhost"
@@ -26,11 +28,14 @@ class Settings(BaseSettings):
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30 * 24 * 60
     JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
-    SQLALCHEMY_DATABASE_URL: str = "sqlite:///./test.db"
-
     CORS_ORIGINS: list[str] = ["http://localhost:3000"]
 
     @property
     def is_sqlite(self) -> bool:
         """Check if using SQLite database"""
-        return self.SQLALCHEMY_DATABASE_URL.startswith("sqlite")
+        return self.connection_string.startswith("sqlite")
+
+    @property
+    def connection_string(self) -> str:
+        """Return the connection string for SQLAlchemy"""
+        return f"{self.DATABASE_DRIVER}://{self.DATABASE_USER}:{self.DATABASE_PASSWORD}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
