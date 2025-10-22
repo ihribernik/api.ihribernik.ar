@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.domain.models.user import UserModel
 from app.domain.repositories.user import UserRepository
+from app.infrastructure.auth import PasswordService
 from app.infrastructure.database.models import User as UserORM
 
 
@@ -29,11 +30,13 @@ class SqlAlchemyUserRepository(UserRepository):
             if not user_orm:
                 raise ValueError("User not found")
             user_orm.username = user.username
-            user_orm.hashed_password = user.hashed_password
+            user_orm.hashed_password = PasswordService.hash_password(
+                user.hashed_password
+            )
         else:
             user_orm = UserORM(
                 username=user.username,
-                hashed_password=user.hashed_password,
+                hashed_password=PasswordService.hash_password(user.hashed_password),
             )
             self.session.add(user_orm)
 

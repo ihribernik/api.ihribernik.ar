@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import hashlib
 from dataclasses import dataclass
+
+from app.infrastructure.auth import PasswordService
 
 
 @dataclass
@@ -12,6 +13,4 @@ class UserModel:
 
     def verify_password(self, plain_password: str) -> bool:
 
-        return (
-            hashlib.sha256(plain_password.encode()).hexdigest() == self.hashed_password
-        )
+        return PasswordService.verify(plain_password, self.hashed_password)

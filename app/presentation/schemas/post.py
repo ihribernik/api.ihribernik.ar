@@ -9,7 +9,6 @@ from app.presentation.schemas.tag import TagResponse
 class PostRequest(BaseModel):
     title: str
     content: str
-    slug: str
 
 
 class PostResponse(BaseModel):
