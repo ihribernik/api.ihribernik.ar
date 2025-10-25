@@ -3,7 +3,7 @@ name = "blog-ihribernik-ar"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 dependencies = [
     "fastapi[standard]>=0.116.1",
     "sqlalchemy>=2.0.43",
@@ -16,7 +16,7 @@ dependencies = [
     "passlib[bcrypt]>=1.7.4",
     "pre-commit>=4.3.0",
     "alembic>=1.16.5",
-    "dependency-injector==4.41.0"
+    "dependency-injector==4.41.0",
 ]
 
 [dependency-groups]
@@ -29,8 +29,10 @@ dev = [
     "pylint>=3.3.8",
     "pytest==8.4.1",
     "pytest-cov>=7.0.0",
+    "setuptools>=80.9.0",
     "types-passlib>=1.7.7.20250602",
     "types-python-jose>=3.5.0.20250531",
+    "wheel>=0.45.1",
 ]
 
 [tool.black]
